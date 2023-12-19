@@ -1,5 +1,5 @@
 import random
-
+import os
 from dotenv import set_key,unset_key, find_dotenv, dotenv_values
 import requests
 import openai
@@ -29,11 +29,12 @@ class App:
         Save a new given API key
         :param api_key: user openAI API key
         :return: None
-        """
-        env_path = find_dotenv()
-        unset_key(env_path, "OPENAI_API_KEY")
-        set_key(env_path, "OPENAI_API_KEY", api_key)
-        st.success("API Key saved successfully!")
+        # """
+        # env_path = find_dotenv()
+        # unset_key(env_path, "OPENAI_API_KEY")
+        # set_key(env_path, "OPENAI_API_KEY", api_key)
+        # st.success("API Key saved successfully!")
+        os.environ['OPENAI_API_KEY'] = api_key
 
     def load_lotti(self, url: str) -> dict:
         """
@@ -51,17 +52,10 @@ class App:
         Validate that one have the needed Key to communicate with the LLM.
         :return: None
         """
-        if self.config['OPENAI_API_KEY'] != '':
-            openai.api_key = self.config['OPENAI_API_KEY']
+        if os.environ.get('OPENAI_API_KEY'):
+            openai.api_key = os.environ.get('OPENAI_API_KEY')
         else:
             st.write("First, set your OpenAI API Key")
-            # Check if .env file exists, create if not
-            env_path = find_dotenv()
-            if not env_path:
-                st.warning("Creating a new .env file...")
-                with open(".env", "w") as file:
-                    file.write("")
-
             user_api_key = st.text_input("Enter your OpenAI API Key:")
             if st.button("Save API Key"):
                 if user_api_key:

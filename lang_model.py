@@ -1,8 +1,8 @@
+import os
 import openai
-from dotenv import dotenv_values
-config = dotenv_values('.env')
+
 # Configure Open AI Key:
-openai.api_key = config['OPENAI_API_KEY']
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 class LLM:
     """

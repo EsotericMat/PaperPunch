@@ -1,5 +1,4 @@
 import streamlit as st
-from dotenv import dotenv_values, unset_key, find_dotenv
 from streamlit_lottie import st_lottie
 from io import StringIO
 from process import ProcessText
@@ -7,9 +6,6 @@ from kw import Kw
 from app import App
 from lang_model import LLM
 
-
-env_path = find_dotenv()
-config = dotenv_values('.env')
 application = App()
 
 head_col1, head_col2 = st.columns(2)
@@ -98,6 +94,4 @@ if st.session_state['button']:
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
-
-unset_key(env_path, "OPENAI_API_KEY")
 
