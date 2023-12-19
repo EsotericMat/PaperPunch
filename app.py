@@ -30,11 +30,8 @@ class App:
         :param api_key: user openAI API key
         :return: None
         # """
-        # env_path = find_dotenv()
-        # unset_key(env_path, "OPENAI_API_KEY")
-        # set_key(env_path, "OPENAI_API_KEY", api_key)
-        # st.success("API Key saved successfully!")
         os.environ['OPENAI_API_KEY'] = api_key
+        st.success("API Key saved successfully!")
 
     def load_lotti(self, url: str) -> dict:
         """
