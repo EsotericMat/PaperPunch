@@ -1,10 +1,15 @@
 import streamlit as st
+import openai
 from streamlit_lottie import st_lottie
 from io import StringIO
 from process import ProcessText
 from kw import Kw
 from app import App
 from lang_model import LLM
+
+st.set_page_config(
+            page_title='PaperPunch'
+        )
 
 application = App()
 
@@ -16,9 +21,16 @@ with head_col1:
 with head_col2:
     st_lottie(lotti_1, height=250, width=450)
 
-st.subheader('Because who needs the boring parts? 😈')
+with st.sidebar:
+    openai_api_key = st.text_input("OpenAI API key", value="", type="password")
+    if st.button('Save'):
+        st.success("API Key saved successfully!")
 
-application.set_llm_key()
+    st.caption(
+            "*If you don't have an OpenAI API key, get it [here](https://platform.openai.com/account/api-keys).*")
+    openai.api_key = openai_api_key
+
+st.subheader('Because who needs the boring parts? 😈')
 
 ptext = ProcessText()
 LLM = LLM()
@@ -47,16 +59,21 @@ if st.session_state['button']:
             st.write('No Text')
             raise ValueError('No Text!')
 
+    # KeyWords
     processed_text = ptext.preprocess(stringio)
     kw = Kw()
     kw.butify(kw.get_kw(processed_text, n=num_of_kw))
 
     with st.spinner(application.random_spinner_text()):
         # Summary
-        summary = LLM.create_summary(kind=summary_type, text=stringio)
-        content = summary.choices[0].message.content
-        st.subheader(f'Amigo, Here is a {summary_type} summary for your text:')
-        st.write(content)
+        try:
+            summary = LLM.create_summary(kind=summary_type, text=stringio)
+            content = summary.choices[0].message.content
+            st.subheader(f'Amigo, Here is a {summary_type} summary for your text:')
+            st.write(content)
+        except:
+            st.warning('Looks Like you have some problems with your API Key, Jump and check it!')
+
 
     st.divider()
 
@@ -86,12 +103,23 @@ if st.session_state['button']:
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.spinner(application.random_spinner_text()):
-            answer = LLM.answer(text=stringio, query=prompt)
-            answer_content = answer.choices[0].message.content
-            response = f"{answer_content}"
+            try:
+                answer = LLM.answer(text=stringio, query=prompt)
+                answer_content = answer.choices[0].message.content
+                response = f"{answer_content}"
         # Display assistant response in chat message container
+            except:
+                st.warning('Looks Like you have some problems with your API Key, Jump and check it!')
+                response = ''
+
         with st.chat_message('The Professor', avatar='professor.png'):
-            st.markdown(response)
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+            try:
+                st.markdown(response)
+            except:
+                st.markdown("Not this time buddy, Get a proper key!")
+
+        try:
+            st.session_state.messages.append({"role": "assistant", "content": response})
+        except:
+            pass
 

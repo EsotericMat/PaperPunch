@@ -2,7 +2,7 @@ import os
 import openai
 
 # Configure Open AI Key:
-openai.api_key = os.environ.get('OPENAI_API_KEY')
+# openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 class LLM:
     """
@@ -19,6 +19,7 @@ class LLM:
         :param text: Text to summarize
         :return: ChatGPT answer
         """
+
         response = openai.chat.completions.create(
             model="gpt-4",
             temperature=0,

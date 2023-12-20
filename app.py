@@ -24,15 +24,6 @@ class App:
     def __init__(self):
         self.config = dotenv_values('.env')
 
-    def save_api_key(self, api_key: str) -> None:
-        """
-        Save a new given API key
-        :param api_key: user openAI API key
-        :return: None
-        # """
-        os.environ['OPENAI_API_KEY'] = api_key
-        st.success("API Key saved successfully!")
-
     def load_lotti(self, url: str) -> dict:
         """
         Load Lotti animation
@@ -43,22 +34,6 @@ class App:
         if response.status_code != 200:
             return {None: None}
         return response.json()
-
-    def set_llm_key(self):
-        """
-        Validate that one have the needed Key to communicate with the LLM.
-        :return: None
-        """
-        if os.environ.get('OPENAI_API_KEY'):
-            openai.api_key = os.environ.get('OPENAI_API_KEY')
-        else:
-            st.write("First, set your OpenAI API Key")
-            user_api_key = st.text_input("Enter your OpenAI API Key:")
-            if st.button("Save API Key"):
-                if user_api_key:
-                    self.save_api_key(user_api_key)
-                else:
-                    st.warning("Please enter an API Key!")
 
     def random_spinner_text(self) -> str:
         """
